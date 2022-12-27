@@ -83,7 +83,10 @@ jobs:
     -
       name: '[Build Docker images]'
       shell: pwsh
-      run: dotnet run/build.dll --target=DockerBuild --dotnet_version=${{ matrix.version }} --dotnet_variant=${{ matrix.variant }}  --dotnet_distro=${{ matrix.distro }} --docker_registry=dockerhub
+      run: |
+        dotnet run/build.dll --target=DockerBuild --dotnet_version=${{ matrix.version }} --dotnet_variant=${{ matrix.variant }} `
+                             --dotnet_distro=${{ matrix.distro }} --docker_registry=dockerhub `
+                             --push_images=${{github.event_name != 'pull_request' && github.repository_owner == 'GitTools'}}
 
     -
       name: Login to GitHub Container Registry
