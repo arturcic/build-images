@@ -1,4 +1,4 @@
-namespace Build;
+﻿namespace Build;
 
 public abstract class DockerBaseTask : FrostingTask<BuildContext>
 {
@@ -6,7 +6,7 @@ public abstract class DockerBaseTask : FrostingTask<BuildContext>
     {
         var buildSettings = GetBuildSettings(dockerImage, context.DockerRegistry);
 
-        context.DockerBuild(buildSettings, GetWorkingDir(dockerImage).ToString(), "--output type=docker");
+        context.DockerBuildXBuild(buildSettings, GetWorkingDir(dockerImage).ToString(), "--annotation index:org.opencontainers.image.description=Description");
 
         var dockerTags = GetDockerTags(dockerImage, context.DockerRegistry, dockerImage.Architecture).ToArray();
 
@@ -46,6 +46,7 @@ public abstract class DockerBaseTask : FrostingTask<BuildContext>
             Rm = true,
             Tag = dockerTags,
             Platform = [$"linux/{suffix}"],
+            Output = ["type=docker,oci-mediatypes=true"],
             Pull = true,
             Label =
             [
