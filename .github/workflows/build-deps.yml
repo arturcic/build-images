@@ -22,7 +22,7 @@ jobs:
       docker_distros: ${{ steps.set_matrix.outputs.docker_distros }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Cache cake frosting
         id: cache-cake
