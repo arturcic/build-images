@@ -44,7 +44,7 @@ jobs:
           key: run-${{ runner.os }}-${{ hashFiles('./build/**') }}
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           global-json-file: build/global.json
 
