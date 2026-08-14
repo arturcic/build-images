@@ -108,7 +108,7 @@ Under `.github/actions/`, each action wraps a call to `dotnet run/build.dll` via
 
 ### Credentials
 
-DockerHub credentials are retrieved at runtime from 1Password via `gittools/cicd/dockerhub-creds`, using `OP_SERVICE_ACCOUNT_TOKEN`. GHCR login uses `github.token`.
+Docker Hub publishing uses GitHub Actions OIDC through `docker/login-action`, with the `DOCKERHUB_OIDC_CONNECTIONID` repository variable and the `gittools` organization. GHCR login uses `github.token`.
 
 ## Key Conventions
 
