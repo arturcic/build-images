@@ -15,16 +15,30 @@ inputs:
     required: true
   docker_registry_username:
     description: 'Docker Registry Username'
-    required: true
+    required: false
   docker_registry_password:
     description: 'Docker Registry Password'
-    required: true
+    required: false
+  dockerhub_organization:
+    description: 'Docker Hub organization'
+    required: false
+  dockerhub_oidc_connection_id:
+    description: 'Docker Hub OIDC connection ID'
+    required: false
 
 runs:
   using: 'composite'
   steps:
+    - name: Login to DockerHub
+      if: ${{ env.PUSH_IMAGES == 'true' && inputs.docker_registry == 'docker.io' }}
+      uses: docker/login-action@v4
+      env:
+        DOCKERHUB_OIDC_CONNECTIONID: ${{ inputs.dockerhub_oidc_connection_id }}
+      with:
+        username: ${{ inputs.dockerhub_organization }}
+
     - name: Login to ${{ inputs.docker_registry }}
-      if: ${{ env.PUSH_IMAGES == 'true' }}
+      if: ${{ env.PUSH_IMAGES == 'true' && inputs.docker_registry != 'docker.io' }}
       uses: docker/login-action@v4
       with:
         registry: ${{ inputs.docker_registry }}

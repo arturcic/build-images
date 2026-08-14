@@ -46,10 +46,9 @@ jobs:
   build_images:
     permissions:
       contents: read
+      id-token: write
       packages: write
     name: Build Images (${{ matrix.dotnet_variant }} - ${{ matrix.arch }})
-    secrets:
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
     needs: [ prepare ]
     strategy:
       fail-fast: false
@@ -71,14 +70,14 @@ jobs:
       dotnet_versions: ${{ needs.prepare.outputs.dotnet_versions }}
       docker_distros: ${{ needs.prepare.outputs.docker_distros }}
       push_images: ${{ github.repository_owner == 'GitTools' }}
+      dockerhub_oidc_connection_id: ${{ vars.DOCKERHUB_OIDC_CONNECTIONID }}
 
   build_images_manifest:
     permissions:
       contents: read
+      id-token: write
       packages: write
     name: Build Images Manifest (${{ matrix.dotnet_variant }})
-    secrets:
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
     needs: [ prepare, build_images ]
     strategy:
       fail-fast: false
@@ -87,8 +86,9 @@ jobs:
 
     uses: ./.github/workflows/_build-images-manifest.yml
     with:
-      runner: ${{ matrix.runner }}
+      runner: ubuntu-24.04
       dotnet_variant: ${{ matrix.dotnet_variant }}
       dotnet_versions: ${{ needs.prepare.outputs.dotnet_versions }}
       docker_distros: ${{ needs.prepare.outputs.docker_distros }}
       push_images: ${{ github.repository_owner == 'GitTools' }}
+      dockerhub_oidc_connection_id: ${{ vars.DOCKERHUB_OIDC_CONNECTIONID }}

@@ -16,15 +16,16 @@ on:
       push_images:
         required: true
         type: boolean
-    secrets:
-      OP_SERVICE_ACCOUNT_TOKEN:
-        required: false
+      dockerhub_oidc_connection_id:
+        required: true
+        type: string
 env:
   DOTNET_INSTALL_DIR: "./.dotnet"
   DOTNET_ROLL_FORWARD: "Major"
   PUSH_IMAGES: ${{ inputs.push_images }}
 
 permissions:
+  id-token: write
   packages: write
 
 jobs:
@@ -56,13 +57,6 @@ jobs:
       - name: Set up Docker
         uses: ./.github/actions/docker-setup
 
-      - name: Load DockerHub credentials
-        id: dockerhub-creds
-        if: env.PUSH_IMAGES == 'true'
-        uses: gittools/cicd/dockerhub-creds@824c3d773fb5d1b00c26b474ae88b7ce9ae555ee # v5
-        with:
-          op_service_account_token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-
       - name: Publish image manifest to DockerHub
         if: env.PUSH_IMAGES == 'true'
         uses: ./.github/actions/build-images-manifest
@@ -72,8 +66,8 @@ jobs:
           docker_distro: ${{ matrix.docker_distro }}
           docker_registry: docker.io
           docker_registry_name: dockerhub
-          docker_registry_username: ${{ steps.dockerhub-creds.outputs.docker_username }}
-          docker_registry_password: ${{ steps.dockerhub-creds.outputs.docker_password }}
+          dockerhub_organization: gittools
+          dockerhub_oidc_connection_id: ${{ inputs.dockerhub_oidc_connection_id }}
 
       - name: Publish image manifest to GitHub
         uses: ./.github/actions/build-images-manifest
